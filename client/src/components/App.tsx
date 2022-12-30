@@ -20,10 +20,10 @@ function App() {
   }
 
   return (
-    <div className="bg-white">
-      <TheNavbar />
-      <div>{component}</div>
-    </div>
+    <>
+      {/* <TheNavbar /> */}
+      {component}
+    </>
   )
 }
 
