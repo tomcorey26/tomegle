@@ -1,0 +1,22 @@
+{
+  "name": "tomegle",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "concurrently \"cd client && pnpm dev \" \"cd server && pnpm start\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tomcorey26/tomegle.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tomcorey26/tomegle/issues"
+  },
+  "homepage": "https://github.com/tomcorey26/tomegle#readme",
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
+}
