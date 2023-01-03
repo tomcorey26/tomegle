@@ -1,24 +1,39 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
+
+type Message = {
+  text: string
+  sender: 'me' | 'them'
+  id: string
+  date: Date
+}
 
 export function ChatMessenger() {
-  const [messages, setMessages] = useState<string[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState<string>('')
 
-  const handleSubmit = (event) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault()
-    setMessages([...messages, input])
+
+    const message: Message = {
+      text: input,
+      sender: 'me',
+      id: crypto.randomUUID(),
+      date: new Date()
+    }
+    setMessages([...messages, message])
     setInput('')
   }
 
   return (
     <div className="flex h-full flex-col">
-      <div className="grow overflow-y-scroll">
-        {messages.map((message, index) => (
-          <div key={index} className="rounded-lg bg-white p-4 shadow-lg">
-            {message}
-          </div>
+      <ul className="grow overflow-y-scroll p-3">
+        {messages.map((message) => (
+          <ChatMessage key={message.id} message={message}>
+            {message.text}
+          </ChatMessage>
         ))}
-      </div>
+      </ul>
+
       <form
         onSubmit={handleSubmit}
         className="rounded-lg bg-gray-200 p-4 shadow-lg"
@@ -34,5 +49,43 @@ export function ChatMessenger() {
         </button>
       </form>
     </div>
+  )
+}
+
+type ChatMessageProps = {
+  message: Message
+}
+
+function ChatMessage({
+  children,
+  message: { sender, date }
+}: React.PropsWithChildren<ChatMessageProps>) {
+  const classArray = []
+
+  let label = ''
+  if (sender === 'me') {
+    classArray.push('bg-red-400', 'text-white', 'ml-auto')
+    label = 'Me'
+  } else {
+    classArray.push('bg-gray-300')
+    label = 'Them'
+  }
+
+  const className = classArray.join(' ')
+
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    hour: 'numeric',
+    minute: 'numeric'
+  }).format(date)
+
+  return (
+    <li
+      tabIndex={0}
+      className={`my-3 max-w-prose rounded-lg bg-white p-3 shadow-lg ${className}`}
+    >
+      <p className="font-bold">{label}</p>
+      {children}
+      <p className="text-xs text-gray-500">{formattedDate}</p>
+    </li>
   )
 }
