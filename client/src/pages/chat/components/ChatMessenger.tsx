@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { For } from 'components/For'
 
 type Message = {
   text: string
@@ -9,53 +10,67 @@ type Message = {
 
 export function ChatMessenger() {
   const [messages, setMessages] = useState<Message[]>([])
-  const [input, setInput] = useState<string>('')
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault()
-
+  const addMessage = (text: string) => {
     const message: Message = {
-      text: input,
+      text,
       sender: 'me',
       id: crypto.randomUUID(),
       date: new Date()
     }
     setMessages([...messages, message])
-    setInput('')
   }
 
   return (
     <div className="flex h-full flex-col">
       <ul className="grow overflow-y-scroll p-3">
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message}>
-            {message.text}
-          </ChatMessage>
-        ))}
+        <For each={messages}>
+          {(message) => (
+            <ChatMessage key={message.id} message={message}>
+              {message.text}
+            </ChatMessage>
+          )}
+        </For>
       </ul>
 
-      <form
-        onSubmit={handleSubmit}
-        className="rounded-lg bg-gray-200 p-4 shadow-lg"
-      >
-        <input
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          className="w-full rounded-lg p-2"
-          placeholder="Enter your message"
-        />
-        <button type="submit" className="rounded-lg bg-blue-500 p-2 text-white">
-          Send
-        </button>
-      </form>
+      <ChatForm addMessage={addMessage} />
     </div>
+  )
+}
+
+type ChatFormProps = {
+  addMessage: (text: string) => void
+}
+
+function ChatForm({ addMessage }: ChatFormProps) {
+  const [input, setInput] = useState<string>('')
+
+  function wrappedHandleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    addMessage(input.trim())
+  }
+
+  return (
+    <form
+      onSubmit={wrappedHandleSubmit}
+      className="rounded-lg bg-gray-200 p-4 shadow-lg"
+    >
+      <input
+        value={input}
+        onChange={(event) => setInput(event.target.value)}
+        className="w-full rounded-lg p-2"
+        placeholder="Enter your message"
+      />
+      <button type="submit" className="rounded-lg bg-blue-500 p-2 text-white">
+        Send
+      </button>
+    </form>
   )
 }
 
 type ChatMessageProps = {
   message: Message
 }
-
 function ChatMessage({
   children,
   message: { sender, date }
