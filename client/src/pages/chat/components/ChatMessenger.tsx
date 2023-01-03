@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { For } from 'components/For'
 
 type Message = {
@@ -9,7 +9,18 @@ type Message = {
 }
 
 export function ChatMessenger() {
+  const messagesRef = useRef<HTMLUListElement>(null)
   const [messages, setMessages] = useState<Message[]>([])
+
+  useLayoutEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const scrollToBottom = () => {
+    if (messagesRef.current) {
+      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
+    }
+  }
 
   const addMessage = (text: string) => {
     const message: Message = {
@@ -23,7 +34,7 @@ export function ChatMessenger() {
 
   return (
     <div className="flex h-full flex-col p-5">
-      <ul className="grow overflow-y-scroll p-3">
+      <ul ref={messagesRef} className="grow overflow-y-scroll p-3">
         <For each={messages}>
           {(message) => (
             <ChatMessage key={message.id} message={message}>

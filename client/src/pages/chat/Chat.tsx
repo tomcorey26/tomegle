@@ -3,10 +3,18 @@ import { UserVideo } from 'pages/chat/components/UserVideo'
 import { ErrorBoundary } from 'react-error-boundary'
 
 // TODO
-// - scroll to bottom when new message is added
+// Overall features
+// - add people as friends from chat
+// - create a room that multiple people can join and can be password protected
+
+// Chat Messenger
+// - send messages with web sockets
+// - add animation upon new message
 // - Add ability to react to messages
 // - add emoji picker
 // - achievements, badges, etc
+// dark mode
+// color theme mode
 //  - first message
 //  - first reaction
 //  - first emoji
