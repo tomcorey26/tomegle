@@ -22,7 +22,7 @@ export function ChatMessenger() {
   }
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full flex-col p-5">
       <ul className="grow overflow-y-scroll p-3">
         <For each={messages}>
           {(message) => (
@@ -47,23 +47,32 @@ function ChatForm({ addMessage }: ChatFormProps) {
 
   function wrappedHandleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (input.trim() === '') return
     addMessage(input.trim())
+    setInput('')
   }
 
   return (
     <form
       onSubmit={wrappedHandleSubmit}
-      className="rounded-lg bg-gray-200 p-4 shadow-lg"
+      className="flex rounded-lg border-2  border-gray-200 p-4 "
     >
       <input
         value={input}
         onChange={(event) => setInput(event.target.value)}
-        className="w-full rounded-lg p-2"
+        className="mr-2 w-full resize-none rounded-lg p-2"
         placeholder="Enter your message"
       />
-      <button type="submit" className="rounded-lg bg-blue-500 p-2 text-white">
-        Send
-      </button>
+
+      <div className="self-end">
+        <button
+          type="submit"
+          className="rounded-lg bg-red-400 py-2 px-4 text-white"
+        >
+          Send
+        </button>
+      </div>
     </form>
   )
 }
@@ -96,7 +105,7 @@ function ChatMessage({
   return (
     <li
       tabIndex={0}
-      className={`my-3 max-w-prose rounded-lg bg-white p-3 shadow-lg ${className}`}
+      className={`my-3 max-w-prose break-words rounded-lg bg-white p-3 shadow-lg ${className}`}
     >
       <p className="font-bold">{label}</p>
       {children}

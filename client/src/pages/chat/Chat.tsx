@@ -2,6 +2,20 @@ import { ChatMessenger } from 'pages/chat/components/ChatMessenger'
 import { UserVideo } from 'pages/chat/components/UserVideo'
 import { ErrorBoundary } from 'react-error-boundary'
 
+// TODO
+// - scroll to bottom when new message is added
+// - Add ability to react to messages
+// - add emoji picker
+// - achievements, badges, etc
+//  - first message
+//  - first reaction
+//  - first emoji
+//  - sent over 100 messages
+//  - sent over 1000 messages
+//  -talked to someone for 1 hour
+//  - talked to someone for 10 hours
+//  - talked to someone for 24 hours
+
 export const Chat = () => {
   return (
     <div className="grid h-screen grid-cols-3 grid-rows-2">
