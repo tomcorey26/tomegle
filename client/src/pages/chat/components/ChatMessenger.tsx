@@ -116,7 +116,7 @@ function ChatMessage({
   return (
     <li
       tabIndex={0}
-      className={`my-3 max-w-prose break-words rounded-lg bg-white p-3 shadow-lg ${className}`}
+      className={`my-3 max-w-prose break-words rounded-lg p-3 shadow-lg ${className}`}
     >
       <p className="font-bold">{label}</p>
       {children}
