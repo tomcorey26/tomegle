@@ -27,9 +27,14 @@ app.use(
 );
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
   socket.on('disconnect', () => {
     console.log('user disconnected');
+  });
+
+  socket.on('my-message', (msg) => {
+    console.log('message, ', msg);
+    msg.sender = 'them';
+    socket.broadcast.emit('their-message', msg);
   });
 });
 

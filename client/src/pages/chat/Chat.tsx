@@ -10,7 +10,9 @@ import { socket } from 'socket'
 // - create a room that multiple people can join and can be password protected
 
 // Chat Messenger
+// - Move the message metadata outside of the message
 // - send messages with web sockets
+// - Add ability to send photos and gifs
 // - add animation upon new message
 // - Add ability to react to messages
 // - add emoji picker

@@ -1,16 +1,38 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useReducer,
+  useRef,
+  useState
+} from 'react'
 import { For } from 'components/For'
+import { socket } from 'socket'
 
 type Message = {
   text: string
   sender: 'me' | 'them'
   id: string
-  date: Date
+  date: string
 }
 
 export function ChatMessenger() {
   const messagesRef = useRef<HTMLUListElement>(null)
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, updateMessages] = useReducer(
+    (messages: Message[], newMessage: Message) => {
+      return [...messages, newMessage]
+    },
+    []
+  )
+
+  useEffect(() => {
+    socket.on('their-message', (message: Message) => {
+      updateMessages(message)
+    })
+
+    return () => {
+      socket.off('their-message')
+    }
+  }, [])
 
   useLayoutEffect(() => {
     scrollToBottom()
@@ -27,9 +49,10 @@ export function ChatMessenger() {
       text,
       sender: 'me',
       id: crypto.randomUUID(),
-      date: new Date()
+      date: new Date().toISOString()
     }
-    setMessages([...messages, message])
+    socket.emit('my-message', message)
+    updateMessages(message)
   }
 
   return (
@@ -111,7 +134,7 @@ function ChatMessage({
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     hour: 'numeric',
     minute: 'numeric'
-  }).format(date)
+  }).format(new Date(date))
 
   return (
     <li
