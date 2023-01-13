@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"cd client && pnpm dev \" \"cd server && pnpm start\""
+    "start": "concurrently \"cd client && pnpm dev \" \"cd server && pnpm dev\""
   },
   "repository": {
     "type": "git",
