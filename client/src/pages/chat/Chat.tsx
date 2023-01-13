@@ -1,6 +1,8 @@
 import { ChatMessenger } from 'pages/chat/components/ChatMessenger'
 import { UserVideo } from 'pages/chat/components/UserVideo'
+import { useEffect, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { socket } from 'socket'
 
 // TODO
 // Overall features
@@ -25,12 +27,40 @@ import { ErrorBoundary } from 'react-error-boundary'
 //  - talked to someone for 24 hours
 
 export const Chat = () => {
+  const [isConnected, setIsConnected] = useState(socket.connected)
+  const [lastPong, setLastPong] = useState<string | null>(null)
+
+  useEffect(() => {
+    socket.on('connect', () => {
+      setIsConnected(true)
+    })
+
+    socket.on('disconnect', () => {
+      setIsConnected(false)
+    })
+
+    socket.on('pong', () => {
+      setLastPong(new Date().toISOString())
+    })
+
+    return () => {
+      socket.off('connect')
+      socket.off('disconnect')
+      socket.off('pong')
+    }
+  }, [])
+
+  const sendPing = () => {
+    socket.emit('ping')
+  }
+
   return (
     <div className="grid h-screen grid-cols-3 grid-rows-2">
       <div className="col-start-1 self-center">
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
         >
+          <button onClick={sendPing}>Send ping</button>
           <UserVideo />
         </ErrorBoundary>
       </div>
