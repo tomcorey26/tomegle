@@ -1,38 +1,18 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useReducer,
-  useRef,
-  useState
-} from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { For } from 'components/For'
 import { socket } from 'socket'
+import { Message } from 'hooks/useChatMessenger'
 
-type Message = {
-  text: string
-  sender: 'me' | 'them'
-  id: string
-  date: string
+type ChatMessengerProps = {
+  messages: Message[]
+  updateMessages: React.Dispatch<Message>
 }
 
-export function ChatMessenger() {
+export function ChatMessenger({
+  messages,
+  updateMessages
+}: ChatMessengerProps) {
   const messagesRef = useRef<HTMLUListElement>(null)
-  const [messages, updateMessages] = useReducer(
-    (messages: Message[], newMessage: Message) => {
-      return [...messages, newMessage]
-    },
-    []
-  )
-
-  useEffect(() => {
-    socket.on('their-message', (message: Message) => {
-      updateMessages(message)
-    })
-
-    return () => {
-      socket.off('their-message')
-    }
-  }, [])
 
   useLayoutEffect(() => {
     scrollToBottom()

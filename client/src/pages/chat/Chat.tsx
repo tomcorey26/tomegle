@@ -1,3 +1,4 @@
+import { useChatMessenger } from 'hooks/useChatMessenger'
 import { ChatMessenger } from 'pages/chat/components/ChatMessenger'
 import { UserVideo } from 'pages/chat/components/UserVideo'
 import { useEffect, useState } from 'react'
@@ -31,6 +32,8 @@ import { socket } from 'socket'
 export const Chat = () => {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [lastPong, setLastPong] = useState<string | null>(null)
+
+  const { messages, updateMessages } = useChatMessenger()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -75,7 +78,7 @@ export const Chat = () => {
       </div>
 
       <div className="col-span-2 row-span-2">
-        <ChatMessenger />
+        <ChatMessenger messages={messages} updateMessages={updateMessages} />
       </div>
     </div>
   )
