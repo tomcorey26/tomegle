@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 export function Home() {
   return (
     <div>
@@ -22,12 +24,12 @@ function Hero() {
           </p>
           <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center lg:justify-start">
             <div className="mx-auto rounded-md shadow">
-              <a
-                href="#"
-                className="focus:shadow-outline-teal flex w-full items-center justify-center rounded-md border border-transparent bg-teal-500 px-8 py-3 text-base font-medium leading-6 text-white transition duration-150 ease-in-out hover:bg-teal-400 focus:border-teal-700 focus:outline-none md:py-4 md:px-10 md:text-lg"
+              <Link
+                to="/chat"
+                className="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-500 px-8 py-3 text-base font-medium leading-6 text-white transition duration-150 ease-in-out hover:bg-teal-400 focus:border-teal-700 focus:outline-none md:py-4 md:px-10 md:text-lg"
               >
                 Start Chatting Now
-              </a>
+              </Link>
             </div>
           </div>
         </div>
