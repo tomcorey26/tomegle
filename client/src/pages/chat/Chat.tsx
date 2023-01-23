@@ -1,5 +1,5 @@
 import { useChatMessenger } from 'hooks/useChatMessenger'
-import { ChatMessenger } from 'pages/chat/components/ChatMessenger'
+import { ChatMessenger } from 'components/ChatMessenger'
 import { UserVideo } from 'pages/chat/components/UserVideo'
 import { useEffect, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'

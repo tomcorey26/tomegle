@@ -1,20 +1,20 @@
 import { useMemo, useState } from 'react'
 
-type FriendsListProps = {
-  friends: Friend[]
+type ConversationListProps = {
+  conversations: FriendConversation[]
   selectedConversationId: string | null
   onSelectConversation: (id: string | null) => void
   className?: string
 }
 
-export const FriendList = ({
-  friends,
+export const ConversationList = ({
+  conversations,
   selectedConversationId,
   onSelectConversation,
   className = ''
-}: FriendsListProps) => {
+}: ConversationListProps) => {
   const [searchTerm, setSearchTerm] = useState('')
-  const unreadCount = friends.filter((f) => f.unread).length
+  const unreadCount = conversations.filter((c) => c.unread).length
 
   const handleSearchChange: React.ChangeEventHandler<HTMLInputElement> = (
     e
@@ -22,15 +22,15 @@ export const FriendList = ({
     setSearchTerm(e.target.value)
   }
 
-  const filteredFriends = useMemo(() => {
-    return friends
+  const filteredConversations = useMemo(() => {
+    return conversations
       .filter((f) => f.username.includes(searchTerm))
       .sort(
         (a, b) =>
           new Date(b.latestMessage.time).getTime() -
           new Date(a.latestMessage.time).getTime()
       )
-  }, [friends, searchTerm])
+  }, [conversations, searchTerm])
 
   return (
     <div className={`relative flex h-screen flex-col ${className}`}>
@@ -57,7 +57,7 @@ export const FriendList = ({
         />
       </div>
       <ul className="overflow-y-auto" role="list" aria-label="List of friends">
-        {filteredFriends.map((friend) => (
+        {filteredConversations.map((friend) => (
           <li
             key={friend.id}
             className={`border-b border-gray-200 p-4 ${

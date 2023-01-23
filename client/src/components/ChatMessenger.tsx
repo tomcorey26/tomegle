@@ -1,17 +1,18 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
 import { For } from 'components/For'
-import { socket } from 'socket'
-import { Message } from 'hooks/useChatMessenger'
+import { useUser } from 'hooks/useUser'
 
 type ChatMessengerProps = {
-  messages: Message[]
-  updateMessages: React.Dispatch<Message>
+  messages: ChatMessage[]
+  updateMessages: React.Dispatch<ChatMessage>
 }
 
 export function ChatMessenger({
   messages,
   updateMessages
 }: ChatMessengerProps) {
+  const user = useUser()
+
   const messagesRef = useRef<HTMLUListElement>(null)
 
   useLayoutEffect(() => {
@@ -25,13 +26,12 @@ export function ChatMessenger({
   }
 
   const addMessage = (text: string) => {
-    const message: Message = {
+    const message: ChatMessage = {
       text,
-      sender: 'me',
+      sender: user.id,
       id: crypto.randomUUID(),
       date: new Date().toISOString()
     }
-    socket.emit('my-message', message)
     updateMessages(message)
   }
 
@@ -92,16 +92,17 @@ function ChatForm({ addMessage }: ChatFormProps) {
 }
 
 type ChatMessageProps = {
-  message: Message
+  message: ChatMessage
 }
 function ChatMessage({
   children,
   message: { sender, date }
 }: React.PropsWithChildren<ChatMessageProps>) {
   const classArray = []
+  const user = useUser()
 
   let label = ''
-  if (sender === 'me') {
+  if (sender === user.id) {
     classArray.push('bg-red-400', 'text-white', 'ml-auto')
     label = 'Me'
   } else {

@@ -6,6 +6,8 @@ import { Server } from 'socket.io';
 
 config();
 const port = 8080;
+
+// TODO: replace with fastify
 const app = express();
 
 // Im not really sure if this and the
