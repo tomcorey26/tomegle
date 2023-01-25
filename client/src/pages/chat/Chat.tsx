@@ -60,7 +60,7 @@ export const Chat = () => {
   }
 
   return (
-    <div className="grid h-screen grid-cols-3 grid-rows-2">
+    <div className="grid h-full grid-cols-3 grid-rows-2">
       <div className="col-start-1 self-center">
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
@@ -78,7 +78,11 @@ export const Chat = () => {
       </div>
 
       <div className="col-span-2 row-span-2">
-        <ChatMessenger messages={messages} updateMessages={updateMessages} />
+        <ChatMessenger
+          className="h-full"
+          messages={messages}
+          updateMessages={updateMessages}
+        />
       </div>
     </div>
   )

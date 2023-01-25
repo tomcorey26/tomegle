@@ -7,12 +7,17 @@ import { router } from 'router'
 
 // TODO: Fix Navbar causing overflow
 
+import '../App.css'
+
 function App() {
   return (
     <>
-      {/* <TheNavbar /> */}
-      <RouterProvider router={router} />
-      {/* {component} */}
+      <header>
+        <TheNavbar />
+      </header>
+      <main>
+        <RouterProvider router={router} />
+      </main>
     </>
   )
 }

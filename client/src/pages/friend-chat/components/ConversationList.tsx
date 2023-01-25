@@ -33,7 +33,7 @@ export const ConversationList = ({
   }, [conversations, searchTerm])
 
   return (
-    <div className={`relative flex h-screen flex-col ${className}`}>
+    <div className={`relative flex h-full flex-col ${className}`}>
       <div className="flex items-center justify-between bg-white p-4">
         <h3>
           Messages

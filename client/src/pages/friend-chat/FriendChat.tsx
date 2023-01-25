@@ -102,7 +102,7 @@ export const FriendChat = () => {
   )
 
   return (
-    <div className="grid md:grid-cols-3">
+    <div className="grid h-full md:grid-cols-3">
       <ConversationList
         conversations={conversations}
         selectedConversationId={selectedFriendId}
@@ -113,6 +113,7 @@ export const FriendChat = () => {
         {/* TODO: Figure out how to model chat and friend data */}
         {selectedConversation ? (
           <ChatMessenger
+            className="h-full"
             messages={selectedConversation.messages}
             updateMessages={(message) =>
               addConversationMessage(message, selectedConversation.id)

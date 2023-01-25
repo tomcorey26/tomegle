@@ -5,11 +5,13 @@ import { useUser } from 'hooks/useUser'
 type ChatMessengerProps = {
   messages: ChatMessage[]
   updateMessages: React.Dispatch<ChatMessage>
+  className?: string
 }
 
 export function ChatMessenger({
   messages,
-  updateMessages
+  updateMessages,
+  className = ''
 }: ChatMessengerProps) {
   const user = useUser()
 
@@ -36,8 +38,8 @@ export function ChatMessenger({
   }
 
   return (
-    <div className="flex h-full flex-col p-5">
-      <ul ref={messagesRef} className="grow overflow-y-scroll p-3">
+    <div className={`flex flex-col p-5 ${className}`}>
+      <ul ref={messagesRef} className="h-0 grow overflow-y-scroll p-3">
         <For each={messages}>
           {(message) => (
             <ChatMessage key={message.id} message={message}>
