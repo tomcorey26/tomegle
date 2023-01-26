@@ -29,7 +29,7 @@ import { socket } from 'socket'
 //  - talked to someone for 10 hours
 //  - talked to someone for 24 hours
 
-export const Chat = () => {
+const Chat = () => {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [lastPong, setLastPong] = useState<string | null>(null)
 
@@ -87,3 +87,5 @@ export const Chat = () => {
     </div>
   )
 }
+
+export default Chat

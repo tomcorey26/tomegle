@@ -130,3 +130,5 @@ export const FriendChat = () => {
     </div>
   )
 }
+
+export default FriendChat
