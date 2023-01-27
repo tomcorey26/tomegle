@@ -1,5 +1,5 @@
-import { LoadingSpinner } from 'components/LoadingSpinner'
-import { TheNavbar } from 'components/TheNavbar'
+import { LoadingSpinner } from '@/components/LoadingSpinner'
+import { TheNavbar } from '@/components/TheNavbar'
 import { Suspense } from 'react'
 
 import { RouterProvider } from 'react-router-dom'

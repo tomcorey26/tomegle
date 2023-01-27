@@ -1,10 +1,10 @@
 import './App.css'
 
-import { useUser } from 'hooks/useUser'
+import { useUser } from '@/hooks/useUser'
 import { lazy } from 'react'
 
-const AuthenticatedApp = lazy(() => import('AuthenticatedApp'))
-const UnAuthenticatedApp = lazy(() => import('UnAuthenticatedApp'))
+const AuthenticatedApp = lazy(() => import('@/AuthenticatedApp'))
+const UnAuthenticatedApp = lazy(() => import('@/UnAuthenticatedApp'))
 
 function App() {
   const user = useUser()

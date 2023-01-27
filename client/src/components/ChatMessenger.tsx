@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react'
-import { For } from 'components/For'
-import { useUser } from 'hooks/useUser'
+import { For } from '@/components/For'
+import { useUser } from '@/hooks/useUser'
 
 type ChatMessengerProps = {
   messages: ChatMessage[]

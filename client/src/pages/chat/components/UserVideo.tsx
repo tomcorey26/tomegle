@@ -1,4 +1,4 @@
-import { useUserMedia } from 'pages/chat/hooks/useUserMedia'
+import { useUserMedia } from '@/pages/chat/hooks/useUserMedia'
 
 type Props = React.DetailedHTMLProps<
   React.VideoHTMLAttributes<HTMLVideoElement>,

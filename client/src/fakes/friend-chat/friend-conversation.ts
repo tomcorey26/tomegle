@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { fakeUser } from 'fakes/user'
-import { fakeMessage } from 'fakes/friend-chat/message'
+import { fakeUser } from '@/fakes/user'
+import { fakeMessage } from '@/fakes/friend-chat/message'
 
 export const fakeFriendConversation = (
   overrides?: Partial<FriendConversation>

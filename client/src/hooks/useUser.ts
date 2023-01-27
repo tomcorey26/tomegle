@@ -1,4 +1,4 @@
-import { fakeUser } from 'fakes/user'
+import { fakeUser } from '@/fakes/user'
 
 const user = fakeUser()
 
