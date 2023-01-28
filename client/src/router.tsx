@@ -21,7 +21,8 @@ export const router = createBrowserRouter([
   },
   {
     path: '/friend-chat',
-    element: <FriendChat />
+    element: <FriendChat />,
+    errorElement: <ErrorPage />
   },
   {
     path: '/chat',
