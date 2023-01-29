@@ -13,7 +13,14 @@ const app = express();
 // Im not really sure if this and the
 // app.use below are both needed. but I can just
 // figure that out later
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: {
     origin: process.env.CORS_ORIGIN,
@@ -21,22 +28,25 @@ const io = new Server(server, {
   },
 });
 
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  })
-);
+io.use((socket, next) => {
+  const user = socket.handshake.auth.user;
+  console.log('user', user);
+  if (!user) {
+    return next(new Error('No user provided'));
+  }
+  next();
+});
 
 io.on('connection', (socket) => {
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
+  socket.on('disconnect', () => {});
 
   socket.on('my-message', (msg) => {
-    console.log('message, ', msg);
     msg.sender = 'them';
     socket.broadcast.emit('their-message', msg);
+  });
+
+  socket.onAny((event, ...args) => {
+    console.log(event, args);
   });
 });
 
