@@ -16,23 +16,23 @@ function Hero() {
           <h2 className="text-3xl font-extrabold leading-9 tracking-tight text-gray-100 sm:text-4xl sm:leading-10">
             Video Chat with people
             <br />
-            <span className="text-teal-500">with Tomegle</span>
+            <span className="text-primary">with Tomegle</span>
           </h2>
           <p className="mx-auto mt-3 max-w-md text-lg leading-7 text-gray-300 sm:mt-4">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at
             ipsum eu nunc commodo posuere et sit amet ligula.
           </p>
           <div className="mx-auto mt-5 max-w-md sm:flex sm:justify-center lg:justify-start">
-            <div className="mx-auto rounded-md shadow">
+            <div className="mx-auto flex rounded-md shadow">
               <Link
                 to="/chat"
-                className="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-500 px-8 py-3 text-base font-medium leading-6 text-white transition duration-150 ease-in-out hover:bg-teal-400 focus:border-teal-700 focus:outline-none md:py-4 md:px-10 md:text-lg"
+                className="bg-primary  mr-3 flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium leading-6 text-white transition duration-150 ease-in-out hover:opacity-70 focus:border-teal-700 focus:outline-none md:py-4 md:px-10 md:text-lg"
               >
                 Find a random person
               </Link>
               <Link
                 to="/friend-chat"
-                className="flex w-full items-center justify-center rounded-md border border-transparent bg-teal-500 px-8 py-3 text-base font-medium leading-6 text-white transition duration-150 ease-in-out hover:bg-teal-400 focus:border-teal-700 focus:outline-none md:py-4 md:px-10 md:text-lg"
+                className="bg-secondary flex w-full items-center justify-center rounded-md border border-transparent px-8 py-3 text-base font-medium leading-6 text-white transition duration-150 ease-in-out hover:opacity-70 focus:border-teal-700 focus:outline-none md:py-4 md:px-10 md:text-lg"
               >
                 Start Chatting Now
               </Link>

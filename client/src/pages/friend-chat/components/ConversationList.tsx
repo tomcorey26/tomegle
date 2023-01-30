@@ -1,3 +1,4 @@
+import { clsx } from 'clsx'
 import { useMemo, useState } from 'react'
 
 type ConversationListProps = {
@@ -37,7 +38,7 @@ export const ConversationList = ({
       <div className="flex items-center justify-between bg-white p-4">
         <h3>
           Messages
-          <span className="ml-2 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+          <span className="text-primary ml-2 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium">
             {unreadCount}
           </span>
         </h3>
@@ -60,9 +61,12 @@ export const ConversationList = ({
         {filteredConversations.map((friend) => (
           <li
             key={friend.id}
-            className={`border-b border-gray-200 p-4 ${
-              friend.id === selectedConversationId ? 'bg-gray-100' : ''
-            }`}
+            className={`border-b border-r border-gray-200 p-4 ${clsx({
+              'border-l-primary': friend.id === selectedConversationId,
+              'border-l-4': friend.id === selectedConversationId,
+              'bg-gray-100': friend.id === selectedConversationId,
+              'border-t': friend.id === filteredConversations[0].id
+            })}`}
             onClick={() => onSelectConversation(friend.id)}
             tabIndex={0}
             onKeyUp={(e) => {

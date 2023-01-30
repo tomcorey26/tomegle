@@ -84,7 +84,7 @@ function ChatForm({ addMessage }: ChatFormProps) {
       <div className="self-end">
         <button
           type="submit"
-          className="rounded-lg bg-red-400 py-2 px-4 text-white"
+          className="bg-primary rounded-lg py-2 px-4 text-white"
         >
           Send
         </button>
@@ -105,10 +105,10 @@ function ChatMessage({
 
   let label = ''
   if (sender === user.id) {
-    classArray.push('bg-red-400', 'text-white', 'ml-auto')
+    classArray.push('bg-primary', 'text-white', 'ml-auto')
     label = 'Me'
   } else {
-    classArray.push('bg-gray-300')
+    classArray.push('bg-gray-200')
     label = 'Them'
   }
 

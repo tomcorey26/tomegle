@@ -102,30 +102,31 @@ export const FriendChat = () => {
   )
 
   return (
-    <div className="grid h-full md:grid-cols-3">
-      <ConversationList
-        conversations={conversations}
-        selectedConversationId={selectedFriendId}
-        onSelectConversation={handleConversationSelect}
-      />
-
-      <div className="col-span-2 hidden bg-gray-200 md:block">
-        {/* TODO: Figure out how to model chat and friend data */}
-        {selectedConversation ? (
-          <ChatMessenger
-            className="h-full"
-            messages={selectedConversation.messages}
-            updateMessages={(message) =>
-              addConversationMessage(message, selectedConversation.id)
-            }
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <div className="text-2xl text-gray-600">
-              Select a conversation to start chatting
+    <div className="h-full p-10">
+      <div className="grid h-full rounded-md border-x border-t shadow-md md:grid-cols-3">
+        <ConversationList
+          conversations={conversations}
+          selectedConversationId={selectedFriendId}
+          onSelectConversation={handleConversationSelect}
+        />
+        <div className="col-span-2 hidden md:block">
+          {/* TODO: Figure out how to model chat and friend data */}
+          {selectedConversation ? (
+            <ChatMessenger
+              className="h-full"
+              messages={selectedConversation.messages}
+              updateMessages={(message) =>
+                addConversationMessage(message, selectedConversation.id)
+              }
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <div className="text-2xl text-gray-600">
+                Select a conversation to start chatting
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   )
