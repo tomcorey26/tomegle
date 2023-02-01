@@ -66,7 +66,9 @@ export const ConversationList = ({
               'border-l-4': friend.id === selectedConversationId,
               'bg-gray-100': friend.id === selectedConversationId,
               'border-t': friend.id === filteredConversations[0].id
-            })}`}
+            })}
+              transition-all duration-200 ease-in-out 
+            `}
             onClick={() => onSelectConversation(friend.id)}
             tabIndex={0}
             onKeyUp={(e) => {
