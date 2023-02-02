@@ -30,7 +30,6 @@ const io = new Server(server, {
 
 io.use((socket, next) => {
   const user = socket.handshake.auth.user;
-  console.log('user', user);
   if (!user) {
     return next(new Error('No user provided'));
   }
@@ -43,10 +42,6 @@ io.on('connection', (socket) => {
   socket.on('my-message', (msg) => {
     msg.sender = 'them';
     socket.broadcast.emit('their-message', msg);
-  });
-
-  socket.onAny((event, ...args) => {
-    console.log(event, args);
   });
 });
 
