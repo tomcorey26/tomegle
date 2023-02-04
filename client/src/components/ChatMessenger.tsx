@@ -1,6 +1,7 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { For } from '@/components/For'
 import { useUser } from '@/hooks/useUser'
+import { useChatScroll } from '@/hooks/useScrollToBottom'
 
 type ChatMessengerProps = {
   messages: ChatMessage[]
@@ -15,17 +16,8 @@ export function ChatMessenger({
 }: ChatMessengerProps) {
   const user = useUser()
 
-  const messagesRef = useRef<HTMLUListElement>(null)
-
-  useLayoutEffect(() => {
-    scrollToBottom()
-  }, [messages])
-
-  const scrollToBottom = () => {
-    if (messagesRef.current) {
-      messagesRef.current.scrollTop = messagesRef.current.scrollHeight
-    }
-  }
+  const { chatScrollerProps, scrolledAboveThreshold, scrollToBottom } =
+    useChatScroll<HTMLUListElement>()
 
   const addMessage = (text: string) => {
     const message: ChatMessage = {
@@ -38,8 +30,17 @@ export function ChatMessenger({
   }
 
   return (
-    <div className={`flex flex-col p-5 ${className}`}>
-      <ul ref={messagesRef} className="h-0 grow overflow-y-scroll p-3">
+    <div className={`relative flex flex-col p-5 ${className}`}>
+      {/* If scrolled above threshold display a button to scroll back to bottom*/}
+      {scrolledAboveThreshold && (
+        <button
+          onClick={() => scrollToBottom()}
+          className="bg-primary absolute top-9 left-1/2 mb-3  rounded-lg py-2 px-4 text-white"
+        >
+          Back to bottom
+        </button>
+      )}
+      <ul className=" h-0 grow overflow-y-scroll p-3" {...chatScrollerProps}>
         <For each={messages}>
           {(message) => (
             <ChatMessage key={message.id} message={message}>
