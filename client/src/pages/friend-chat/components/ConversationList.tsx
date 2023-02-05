@@ -34,7 +34,7 @@ export const ConversationList = ({
   }, [conversations, searchTerm])
 
   return (
-    <div className={`flex flex-col ${className}`}>
+    <div className={`flex h-full flex-col ${className}`}>
       <div className="flex items-center justify-between bg-white p-4">
         <h3>
           Messages
