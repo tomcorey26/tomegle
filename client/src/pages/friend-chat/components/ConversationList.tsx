@@ -34,7 +34,7 @@ export const ConversationList = ({
   }, [conversations, searchTerm])
 
   return (
-    <div className={`relative flex h-full flex-col ${className}`}>
+    <div className={`flex flex-col ${className}`}>
       <div className="flex items-center justify-between bg-white p-4">
         <h3>
           Messages
@@ -57,7 +57,11 @@ export const ConversationList = ({
           className="w-full rounded-md bg-gray-200 p-2"
         />
       </div>
-      <ul className="overflow-y-auto" role="list" aria-label="List of friends">
+      <ul
+        className="h-0 grow overflow-y-auto"
+        role="list"
+        aria-label="List of friends"
+      >
         {filteredConversations.map((friend) => (
           <li
             key={friend.id}
