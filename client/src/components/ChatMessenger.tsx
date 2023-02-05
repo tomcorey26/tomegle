@@ -1,41 +1,69 @@
-import React, { useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import { For } from '@/components/For'
 import { useUser } from '@/hooks/useUser'
 import { useChatScroll } from '@/hooks/useScrollToBottom'
+import { usePreviousState } from '@/hooks/usePreviousState'
 
 type ChatMessengerProps = {
+  conversationId?: string
   messages: ChatMessage[]
   updateMessages: React.Dispatch<ChatMessage>
   className?: string
 }
 
+// when they have a new message and we are above the threshold, we dont want to scroll to the bottom
+// when they are above the threshold and there is a new message, we want to indicate that there is a new message
+// we want to save where they are scrolled to
+// when they have a new message and we are below the threshold, we want to scroll to the bottom
+
 export function ChatMessenger({
+  conversationId,
   messages,
   updateMessages,
   className = ''
 }: ChatMessengerProps) {
   const user = useUser()
 
+  const prevConversationId = usePreviousState(conversationId)
+
   const { chatScrollerProps, scrolledAboveThreshold, scrollToBottom } =
     useChatScroll<HTMLUListElement>()
 
   const addMessage = (text: string) => {
-    const message: ChatMessage = {
+    updateMessages({
       text,
       sender: user.id,
       id: crypto.randomUUID(),
       date: new Date().toISOString()
-    }
-    updateMessages(message)
+    })
   }
+
+  useLayoutEffect(() => {
+    // TODO: have the scroll be preserved when switching conversations
+    if (prevConversationId !== conversationId) {
+      scrollToBottom({ behavior: 'auto' })
+      return
+    }
+
+    if (scrolledAboveThreshold) return
+
+    scrollToBottom({ behavior: 'smooth' })
+  }, [
+    messages,
+    scrollToBottom,
+    scrolledAboveThreshold,
+    prevConversationId,
+    conversationId
+  ])
 
   return (
     <div className={`relative flex flex-col p-5 ${className}`}>
-      {/* If scrolled above threshold display a button to scroll back to bottom*/}
+      {/* TODO: show new message count for any messages */}
+      {/* sent when above threshhold */}
       {scrolledAboveThreshold && (
         <button
           onClick={() => scrollToBottom()}
-          className="bg-primary absolute top-9 left-1/2 mb-3  rounded-lg py-2 px-4 text-white"
+          className="bg-primary absolute top-9 left-1/2 mb-3 -translate-x-1/2 rounded-lg py-2 px-4 text-white"
         >
           Back to bottom
         </button>

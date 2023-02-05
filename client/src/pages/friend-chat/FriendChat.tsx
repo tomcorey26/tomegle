@@ -113,6 +113,7 @@ export const FriendChat = () => {
           {/* TODO: Figure out how to model chat and friend data */}
           {selectedConversation ? (
             <ChatMessenger
+              conversationId={selectedConversation.id}
               className="h-full"
               messages={selectedConversation.messages}
               updateMessages={(message) =>

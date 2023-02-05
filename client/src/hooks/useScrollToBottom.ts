@@ -14,15 +14,18 @@ export function useChatScroll<T extends Element>({
   const ref = useRef<T>(null)
   const [scrolledAboveThreshold, setScrolledAboveThreshold] = useState(false)
 
-  const scrollToBottom = (options: Partial<ScrollToOptions> = {}) => {
-    invariant(ref.current, nullRefMsg)
+  const scrollToBottom = useCallback(
+    (options: Partial<ScrollToOptions> = {}) => {
+      invariant(ref.current, nullRefMsg)
 
-    ref.current.scrollTo({
-      top: ref.current.scrollHeight,
-      behavior: 'smooth',
-      ...options
-    })
-  }
+      ref.current.scrollTo({
+        top: ref.current.scrollHeight,
+        behavior: 'smooth',
+        ...options
+      })
+    },
+    []
+  )
 
   const checkIfScrolledAboveThreshold = useCallback(() => {
     invariant(ref.current, nullRefMsg)

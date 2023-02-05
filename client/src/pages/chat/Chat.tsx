@@ -29,6 +29,11 @@ import { socket } from 'socket'
 //  - talked to someone for 10 hours
 //  - talked to someone for 24 hours
 
+// use machine learning to detect if someone is doing something inappropriate
+// and insta ban them
+// make it so that you dont have to make an account
+// to friend someone and chat with them, and call them directly
+
 const Chat = () => {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [lastPong, setLastPong] = useState<string | null>(null)
