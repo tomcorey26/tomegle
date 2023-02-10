@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { config } from 'dotenv';
-import { Server } from 'socket.io';
+import { startWebsocket } from './startWebsocket.js';
 
 config();
 const port = 8080;
@@ -19,31 +19,10 @@ app.use(
     credentials: true,
   })
 );
+
 const server = http.createServer(app);
 
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  },
-});
-
-io.use((socket, next) => {
-  const user = socket.handshake.auth.user;
-  if (!user) {
-    return next(new Error('No user provided'));
-  }
-  next();
-});
-
-io.on('connection', (socket) => {
-  socket.on('disconnect', () => {});
-
-  socket.on('my-message', (msg) => {
-    msg.sender = 'them';
-    socket.broadcast.emit('their-message', msg);
-  });
-});
+startWebsocket(server);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
