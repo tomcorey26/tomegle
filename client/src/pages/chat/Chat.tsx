@@ -9,6 +9,8 @@ import { socket } from 'socket'
 // Overall features
 // - add people as friends from chat
 // - create a room that multiple people can join and can be password protected
+// Party mode, find random people where 4 people can join a room and talk to each other
+// You can leave and vote to kick people out of the room
 
 // Chat Messenger
 // - Move the message metadata outside of the message

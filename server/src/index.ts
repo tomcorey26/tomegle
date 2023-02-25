@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { config } from 'dotenv';
-import { startWebsocket } from './startWebsocket.js';
+import { ServerSocket } from './socket.js';
 
 config();
 const port = 8080;
@@ -10,9 +10,14 @@ const port = 8080;
 // TODO: replace with fastify
 const app = express();
 
-// Im not really sure if this and the
-// app.use below are both needed. but I can just
-// figure that out later
+const server = http.createServer(app);
+
+new ServerSocket(server);
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
@@ -20,12 +25,10 @@ app.use(
   })
 );
 
-const server = http.createServer(app);
-
-startWebsocket(server);
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+// log all requests
+app.use((req, res, next) => {
+  console.log(`Method: ${req.method}- Url${req.url}`);
+  next();
 });
 
 server.listen(port, () => {
