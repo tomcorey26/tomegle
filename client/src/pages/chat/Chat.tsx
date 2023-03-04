@@ -37,34 +37,17 @@ import { socket } from 'socket'
 // to friend someone and chat with them, and call them directly
 
 const Chat = () => {
-  const [isConnected, setIsConnected] = useState(socket.connected)
-  const [lastPong, setLastPong] = useState<string | null>(null)
-
   const { messages, updateMessages } = useChatMessenger()
 
   useEffect(() => {
-    socket.on('connect', () => {
-      setIsConnected(true)
-    })
-
-    socket.on('disconnect', () => {
-      setIsConnected(false)
-    })
-
-    socket.on('pong', () => {
-      setLastPong(new Date().toISOString())
+    socket.emit('joinsert-room', (roomId: string) => {
+      console.log(roomId)
     })
 
     return () => {
-      socket.off('connect')
-      socket.off('disconnect')
-      socket.off('pong')
+      socket.off('joinsert-room')
     }
   }, [])
-
-  const sendPing = () => {
-    socket.emit('ping')
-  }
 
   return (
     <div className="grid h-full grid-cols-3 grid-rows-2">
@@ -72,15 +55,14 @@ const Chat = () => {
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
         >
-          <button onClick={sendPing}>Send ping</button>
-          <UserVideo />
+          {/* <UserVideo /> */}
         </ErrorBoundary>
       </div>
       <div className="col-start-1 row-start-2 self-center">
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
         >
-          <UserVideo />
+          {/* <UserVideo /> */}
         </ErrorBoundary>
       </div>
 

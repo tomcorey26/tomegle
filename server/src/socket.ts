@@ -4,11 +4,18 @@ import { v4 } from 'uuid';
 
 type Uuid = string;
 
+interface Room {
+  users: Uuid[];
+}
+
 export class ServerSocket {
   public static instance: ServerSocket;
   public io: Server;
 
   public users: Record<Uuid, string> = {};
+
+  public rooms: Map<Uuid, Room> = new Map();
+  public openRooms = new Set<Uuid>();
 
   constructor(server: HttpServer) {
     ServerSocket.instance = this;
@@ -67,16 +74,39 @@ export class ServerSocket {
       // Generate a new user
       const uid = v4();
       this.users[uid] = socket.id;
-      console.info('connected users: ', this.users);
 
       callback(uid);
     });
-    // socket.on('join', (username: string) => {
-    //   const id = v4();
-    //   this.users[id] = username;
-    //   socket.emit('joined', id);
-    //   this.io.emit('users', this.users);
-    // });
+
+    // Random Chat Page - Join Room
+    socket.on(
+      'joinsert-room',
+      (respond: (roomId: Uuid, users: Uuid[]) => void) => {
+        const uid = this.getUidFromSocketId(socket.id);
+        let roomId: Uuid;
+
+        if (this.openRooms.size === 0) {
+          roomId = v4();
+          this.rooms.set(roomId, { users: [] });
+          this.openRooms.add(roomId);
+          console.info('New room created: ' + roomId);
+        } else {
+          roomId = Array.from(this.openRooms)[0];
+          console.info('Joining existing room: ' + roomId);
+        }
+
+        const room = this.rooms.get(roomId);
+        room.users.push(uid);
+        socket.join(roomId);
+
+        if (room.users.length === 2) {
+          this.openRooms.delete(roomId);
+        }
+
+        respond(roomId, room.users);
+      }
+    );
+
     socket.on('message', (message: string) => {
       socket.broadcast.emit('message', message);
     });
