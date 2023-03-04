@@ -1,7 +1,7 @@
 import { useChatMessenger } from '@/hooks/useChatMessenger'
 import { ChatMessenger } from '@/components/ChatMessenger'
 import { UserVideo } from '@/pages/chat/components/UserVideo'
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { socket } from 'socket'
 
@@ -36,8 +36,37 @@ import { socket } from 'socket'
 // make it so that you dont have to make an account
 // to friend someone and chat with them, and call them directly
 
+type ChatReducerState = {
+  roomId: string
+}
+
+type ChatReducerAction = {
+  type: 'join-room'
+  payload: string
+}
+
+type ChatReducer = (
+  state: ChatReducerState,
+  action: ChatReducerAction
+) => ChatReducerState
+
 const Chat = () => {
   const { messages, updateMessages } = useChatMessenger()
+
+  // create a reducer that will handle all the socket events
+  // and update the state accordingly.
+  // start with the join room event. Add typescript types too
+  const [state, dispatch] = useReducer<ChatReducer>(
+    (state, action) => {
+      switch (action.type) {
+        case 'join-room':
+          return { ...state, roomId: action.payload }
+        default:
+          return state
+      }
+    },
+    { roomId: '' }
+  )
 
   useEffect(() => {
     socket.emit('joinsert-room', (roomId: string) => {

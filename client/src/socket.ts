@@ -4,7 +4,7 @@ interface ClientToServerEvents {
   'joinsert-room': (callback: (roomId: string) => void) => void
   'leave-room': (roomId: string) => void
   'send-message': (message: string) => void
-  handshake: (callback: (uid: string) => void) => void
+  handshake: (callback: (user: SocketUser) => void) => void
 }
 
 export const socket: Socket<any, ClientToServerEvents> = io(
