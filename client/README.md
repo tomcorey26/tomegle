@@ -1,72 +1,75 @@
-# React Tailwindcss Boilerplate build with Vite
+# Features
 
-This is a [ReactJS](https://reactjs.org) + [Vite](https://vitejs.dev) boilerplate to be used with [Tailwindcss](https://tailwindcss.com).
+Start Search
 
-## What is inside?
+1. Create a websocket connection to the server
 
-This project uses many tools like:
+2a. On Click, navigate to video chat finder page
 
-- [ReactJS](https://reactjs.org)
-- [Vite](https://vitejs.dev)
-- [TypeScript](https://www.typescriptlang.org)
-- [Jest](https://jestjs.io)
-- [Testing Library](https://testing-library.com)
-- [Tailwindcss](https://tailwindcss.com)
-- [Eslint](https://eslint.org)
-- [Prettier](https://prettier.io)
+3. On Page Navigation
 
-## Getting Started
+(Sequentiallly)
 
-### Install
+- Connect to camera
+- Connect to microphone
+- send a request to the server to search/create a room
+- on room join, send video and audio to server
 
-Create the project.
+2b. If is no open rooms, create a new room and connect websocket to the room  
+2c. If is open rooms, join a room and connect websocket to the room
 
-```bash
-npx degit joaopaulomoraes/reactjs-vite-tailwindcss-boilerplate my-app
+1.
+
+- Server: On user connection to room, have each socket broadcast video and audio to all other sockets in the room
+- Client: On video and audio receive, play video and audio
+
+2d. When one person leaves the room, the room is not deleted
+
+- On disconnect, end the video and audio stream for both clients and set loading to true
+- Have the client who skipped the other person, send a request to the server to search for a room
+- Have the client who stayed be shown a loading screen while they wait for another person to join
+
+2d. When both people leave the room, the room is deleted
+
+- Need to make sure the the db for the room is locked while the room is being deleted, so that no race conditions occur
+
+## REST API Communication
+
+POST /api/rooms - join/create a room
+id - room id
+users - array sockets ids
+
+## Web Socket Communication
+
+Client:
+
+`search-room` - send a request to the server to search for a room
+
+```ts
+// CLIENT
+socket.emit('search-room')
+
+// SERVER
+io.on('search-room', () => {
+  // search for a room
+  // if is no open rooms, create a new room
+})
 ```
 
-Access the project directory.
+`join-room` - join a room
 
-```bash
-cd my-app
+```ts
+// CLIENT
+socket.emit('join-room', { roomId: '123' })
+
+
+- Send a request to the server to search for a room
+- Connect to camera
+- Connect to microphone
+- send video and audio to server
+- receive video and audio from server
+
+Server:
+
+- Create a room
 ```
-
-Install dependencies.
-
-```bash
-pnpm install
-```
-
-Serve with hot reload at <http://localhost:5173>.
-
-```bash
-pnpm run dev
-```
-
-### Lint
-
-```bash
-pnpm run lint
-```
-
-### Typecheck
-
-```bash
-pnpm run typecheck
-```
-
-### Build
-
-```bash
-pnpm run build
-```
-
-### Test
-
-```bash
-pnpm run test
-```
-
-## License
-
-This project is licensed under the MIT License.
