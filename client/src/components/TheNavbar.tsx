@@ -1,7 +1,7 @@
 export const TheNavbar = () => {
   return (
-    <nav className="flex flex-wrap items-center justify-between bg-teal-500 p-6">
-      <div className="mr-6 flex shrink-0 items-center text-white">
+    <nav className="flex flex-wrap items-center justify-between border-b-2 border-slate-200 p-6">
+      <div className="mr-6 flex shrink-0 items-center text-black">
         <svg
           className="mr-2 h-8 w-8 fill-current"
           width="54"
@@ -27,22 +27,13 @@ export const TheNavbar = () => {
       </div>
       <div className="block w-full grow lg:flex lg:w-auto lg:items-center">
         <div className="text-sm lg:grow">
-          <a
-            href="#"
-            className="mt-4 mr-4 block text-teal-200 hover:text-white lg:mt-0 lg:inline-block"
-          >
+          <a href="#" className="mt-4 mr-4 block  lg:mt-0 lg:inline-block">
             Home
           </a>
-          <a
-            href="#"
-            className="mt-4 mr-4 block text-teal-200 hover:text-white lg:mt-0 lg:inline-block"
-          >
+          <a href="#" className="mt-4 mr-4 block  lg:mt-0 lg:inline-block">
             About
           </a>
-          <a
-            href="#"
-            className="mt-4 mr-4 block text-teal-200 hover:text-white lg:mt-0 lg:inline-block"
-          >
+          <a href="#" className="mt-4 mr-4 block  lg:mt-0 lg:inline-block">
             About
           </a>
         </div>

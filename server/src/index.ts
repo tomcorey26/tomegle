@@ -2,21 +2,20 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { config } from 'dotenv';
-import { Server } from 'socket.io';
+import { ServerSocket } from './socket.js';
 
 config();
 const port = 8080;
+
+// TODO: replace with fastify
 const app = express();
 
-// Im not really sure if this and the
-// app.use below are both needed. but I can just
-// figure that out later
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CORS_ORIGIN,
-    credentials: true,
-  },
+
+new ServerSocket(server);
+
+app.get('/', (req, res) => {
+  res.send('Hello World!');
 });
 
 app.use(
@@ -26,20 +25,10 @@ app.use(
   })
 );
 
-io.on('connection', (socket) => {
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-
-  socket.on('my-message', (msg) => {
-    console.log('message, ', msg);
-    msg.sender = 'them';
-    socket.broadcast.emit('their-message', msg);
-  });
-});
-
-app.get('/', (req, res) => {
-  res.send('Hello World!');
+// log all requests
+app.use((req, res, next) => {
+  console.log(`Method: ${req.method}- Url${req.url}`);
+  next();
 });
 
 server.listen(port, () => {

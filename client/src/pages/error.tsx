@@ -1,8 +1,7 @@
 import { Link, useRouteError } from 'react-router-dom'
 
-export function ErrorPage() {
+function ErrorPage() {
   const error = useRouteError()
-  console.error(error)
 
   return (
     <div id="error-page">
@@ -26,3 +25,5 @@ export function ErrorPage() {
     </div>
   )
 }
+
+export default ErrorPage

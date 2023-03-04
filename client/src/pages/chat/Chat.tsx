@@ -1,5 +1,6 @@
-import { ChatMessenger } from 'pages/chat/components/ChatMessenger'
-import { UserVideo } from 'pages/chat/components/UserVideo'
+import { useChatMessenger } from '@/hooks/useChatMessenger'
+import { ChatMessenger } from '@/components/ChatMessenger'
+import { UserVideo } from '@/pages/chat/components/UserVideo'
 import { useEffect, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { socket } from 'socket'
@@ -8,6 +9,8 @@ import { socket } from 'socket'
 // Overall features
 // - add people as friends from chat
 // - create a room that multiple people can join and can be password protected
+// Party mode, find random people where 4 people can join a room and talk to each other
+// You can leave and vote to kick people out of the room
 
 // Chat Messenger
 // - Move the message metadata outside of the message
@@ -28,9 +31,16 @@ import { socket } from 'socket'
 //  - talked to someone for 10 hours
 //  - talked to someone for 24 hours
 
-export const Chat = () => {
+// use machine learning to detect if someone is doing something inappropriate
+// and insta ban them
+// make it so that you dont have to make an account
+// to friend someone and chat with them, and call them directly
+
+const Chat = () => {
   const [isConnected, setIsConnected] = useState(socket.connected)
   const [lastPong, setLastPong] = useState<string | null>(null)
+
+  const { messages, updateMessages } = useChatMessenger()
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -57,7 +67,7 @@ export const Chat = () => {
   }
 
   return (
-    <div className="grid h-screen grid-cols-3 grid-rows-2">
+    <div className="grid h-full grid-cols-3 grid-rows-2">
       <div className="col-start-1 self-center">
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
@@ -75,8 +85,14 @@ export const Chat = () => {
       </div>
 
       <div className="col-span-2 row-span-2">
-        <ChatMessenger />
+        <ChatMessenger
+          className="h-full"
+          messages={messages}
+          updateMessages={updateMessages}
+        />
       </div>
     </div>
   )
 }
+
+export default Chat
