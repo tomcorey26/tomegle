@@ -78,46 +78,19 @@ export class ServerSocket {
     });
 
     // Random Chat Page - Join Room
-    socket.on(
-      'joinsert-room',
-      (respond: (roomId: Uuid, users: User[]) => void) => {
-        let roomId: Uuid;
+    socket.on('joinsert-room', () => {
+      this.joinSertRoom(socket);
+    });
 
-        if (this.openRooms.size === 0) {
-          // Create a new room
-          roomId = v4();
-          this.rooms.set(roomId, { users: [] });
-          this.openRooms.add(roomId);
-          console.info('New room created: ' + roomId);
-        } else {
-          // Join an existing room
-          roomId = Array.from(this.openRooms)[0];
-          console.info('Joining existing room: ' + roomId);
-        }
+    socket.on('skip-room', () => {
+      this.leaveRoom(socket);
+      this.joinSertRoom(socket);
+    });
 
-        // Add user to room map and socket room
-        const user = this.users.get(socket.id);
-        const room = this.rooms.get(roomId);
-        room.users.push(user);
-        socket.join(roomId);
-
-        // Remove room from open rooms if full (2 People Max)
-        if (room.users.length === 2) {
-          this.openRooms.delete(roomId);
-        }
-
-        // Send room id and users to client
-        respond(roomId, room.users);
-      }
-    );
-
-    // socket.on('leave-room', () => {
-    //   this.handleDisconnectOrLeave(socket);
-    // });
-
-    // socket.on('disconnecting', () => {
-    //   this.handleDisconnectOrLeave(socket);
-    // });
+    socket.on('disconnecting', () => {
+      console.info('Socket disconnecting: ' + socket.id);
+      this.leaveRoom(socket);
+    });
 
     socket.on('message', (message: string) => {
       socket.broadcast.emit('message', message);
@@ -139,28 +112,68 @@ export class ServerSocket {
     });
   };
 
-  // handleDisconnectOrLeave = (socket: Socket) => {
-  //   const maybeCurrentRoom = socket.rooms[0];
-  //   const room = this.rooms.get(maybeCurrentRoom);
+  leaveRoom = (socket: Socket) => {
+    const roomId = Array.from(socket.rooms).find((room) => room !== socket.id);
+    if (!roomId) {
+      return;
+    }
 
-  //   if (!room) {
-  //     return -1;
-  //   }
+    const room = this.rooms.get(roomId);
 
-  //   const userIndex = room.users.findIndex((user) => user. === id);
+    // remove the user from the room
+    const userIndex = room.users.findIndex(
+      (user) => user.socketId === socket.id
+    );
+    if (userIndex !== -1) {
+      room.users.splice(userIndex, 1);
+      socket.leave(roomId);
+    }
 
-  //   if (userIndex !== -1) {
-  //     const roomId = socket.rooms[0];
-  //     const user = rooms[roomId].users[userIndex];
-  //     rooms[roomId].users.splice(userIndex, 1);
+    // delete the room if it is empty
+    if (room.users.length === 0) {
+      console.info(`Deleting empty room ${roomId}`);
+      this.rooms.delete(roomId);
+      this.openRooms.delete(roomId);
+    }
 
-  //     if (isLeaving && rooms[roomId].users.length === 1) {
-  //       const remainingUser = rooms[roomId].users[0];
-  //       openRooms.add(remainingUser.roomId);
-  //       spotsAvailable[remainingUser.roomId] = 1;
-  //     }
+    // if the room is not full, add it to the open rooms
+    // and notify the other user that the other user left
+    if (room.users.length === 1) {
+      console.info(`Adding room ${roomId} to open rooms`);
+      this.openRooms.add(roomId);
+      this.io.to(roomId).emit('room-update', roomId, room.users);
+    }
 
-  //     socket.leave(user.roomId);
-  //   }
-  // };
+    console.info(`User ${socket.id} left room ${roomId}`);
+  };
+
+  joinSertRoom = (socket: Socket) => {
+    let roomId: Uuid;
+
+    if (this.openRooms.size === 0) {
+      // Create a new room yo
+      roomId = v4();
+      this.rooms.set(roomId, { users: [] });
+      this.openRooms.add(roomId);
+      console.info('New room created: ' + roomId);
+    } else {
+      // Join an existing room
+      roomId = Array.from(this.openRooms)[0];
+      console.info('Joining existing room: ' + roomId);
+    }
+
+    // Add user to room map and socket room
+    const user = this.users.get(socket.id);
+    const room = this.rooms.get(roomId);
+    console.info(`Adding user ${socket.id} to room ${roomId}`);
+    room.users.push(user);
+    socket.join(roomId);
+
+    // Remove room from open rooms if full (2 People Max)
+    if (room.users.length === 2) {
+      this.openRooms.delete(roomId);
+    }
+
+    this.io.to(roomId).emit('room-update', roomId, room.users);
+  };
 }

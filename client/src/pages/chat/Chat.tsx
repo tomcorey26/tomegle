@@ -38,12 +38,17 @@ import { socket } from 'socket'
 
 type ChatReducerState = {
   roomId: string
+  users: SocketUser[]
 }
 
-type ChatReducerAction = {
-  type: 'join-room'
-  payload: string
-}
+type ChatReducerAction =
+  | {
+      type: 'join-room'
+      payload: { roomId: string; users: SocketUser[] }
+    }
+  | {
+      type: 'skip-room'
+    }
 
 type ChatReducer = (
   state: ChatReducerState,
@@ -60,23 +65,39 @@ const Chat = () => {
     (state, action) => {
       switch (action.type) {
         case 'join-room':
-          return { ...state, roomId: action.payload }
+          return {
+            ...state,
+            roomId: action.payload.roomId,
+            users: action.payload.users
+          }
+        case 'skip-room':
+          return {
+            ...state,
+            roomId: '',
+            users: []
+          }
         default:
           return state
       }
     },
-    { roomId: '' }
+    { roomId: '', users: [] }
   )
 
   useEffect(() => {
-    socket.emit('joinsert-room', (roomId: string) => {
-      console.log(roomId)
+    socket.emit('joinsert-room')
+
+    socket.on('room-update', (roomId: string, users: SocketUser[]) => {
+      dispatch({ type: 'join-room', payload: { roomId, users } })
     })
 
     return () => {
-      socket.off('joinsert-room')
+      socket.off('room-update')
     }
   }, [])
+
+  const skip = () => {
+    socket.emit('skip-room')
+  }
 
   return (
     <div className="grid h-full grid-cols-3 grid-rows-2">
@@ -96,6 +117,13 @@ const Chat = () => {
       </div>
 
       <div className="col-span-2 row-span-2">
+        <p>Room: {state.roomId}</p>
+        <p>Users</p>
+        {state.users.map((user) => (
+          <div key={user.socketId}>{user.socketId}</div>
+        ))}
+        {/* TODO: Disable when roomId is '' */}
+        <button onClick={skip}>skip</button>
         <ChatMessenger
           className="h-full"
           messages={messages}

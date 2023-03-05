@@ -1,13 +1,17 @@
 import io, { Socket } from 'socket.io-client'
 
 interface ClientToServerEvents {
-  'joinsert-room': (callback: (roomId: string) => void) => void
-  'leave-room': (roomId: string) => void
+  'joinsert-room': () => void
+  'skip-room': () => void
   'send-message': (message: string) => void
   handshake: (callback: (user: SocketUser) => void) => void
 }
 
-export const socket: Socket<any, ClientToServerEvents> = io(
+interface ServerToClientEvents {
+  'room-update': (roomId: string, users: SocketUser[]) => void
+}
+
+export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
   'http://localhost:8080',
   {
     withCredentials: true,
