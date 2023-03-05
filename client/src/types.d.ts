@@ -1,3 +1,7 @@
+interface SocketUser {
+  socketId: string
+}
+
 interface User {
   id: string
   name: string

@@ -13,7 +13,7 @@ import { Socket } from 'socket.io-client'
 
 export interface SocketState {
   socket: Socket | undefined
-  uid: string
+  user: SocketUser | null
 }
 
 type SocketReducerAction =
@@ -22,8 +22,8 @@ type SocketReducerAction =
       payload: Socket
     }
   | {
-      type: 'update_uid'
-      payload: string
+      type: 'update_user'
+      payload: SocketUser
     }
 
 export const socketContextReducer = (
@@ -36,10 +36,10 @@ export const socketContextReducer = (
         ...state,
         socket: action.payload
       }
-    case 'update_uid':
+    case 'update_user':
       return {
         ...state,
-        uid: action.payload
+        user: action.payload
       }
     default:
       throw new Error('Invalid action type')
@@ -56,7 +56,7 @@ type AppConnectionStatus = 'connecting' | 'connected' | 'connect_error'
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(socketContextReducer, {
     socket: undefined,
-    uid: ''
+    user: null
   })
   const [connectError, setConnectError] = useState<Error | null>(null)
   const [status, setStatus] = useState<AppConnectionStatus>('connecting')
@@ -110,8 +110,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const sendHandshake = () => {
-    socket.emit('handshake', (uid: string) => {
-      dispatch({ type: 'update_uid', payload: uid })
+    socket.emit('handshake', (user: SocketUser) => {
+      dispatch({ type: 'update_user', payload: user })
       setStatus('connected')
     })
   }

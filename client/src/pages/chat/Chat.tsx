@@ -1,7 +1,7 @@
 import { useChatMessenger } from '@/hooks/useChatMessenger'
 import { ChatMessenger } from '@/components/ChatMessenger'
 import { UserVideo } from '@/pages/chat/components/UserVideo'
-import { useEffect, useState } from 'react'
+import { useEffect, useReducer, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { socket } from 'socket'
 
@@ -36,34 +36,67 @@ import { socket } from 'socket'
 // make it so that you dont have to make an account
 // to friend someone and chat with them, and call them directly
 
-const Chat = () => {
-  const [isConnected, setIsConnected] = useState(socket.connected)
-  const [lastPong, setLastPong] = useState<string | null>(null)
+type ChatReducerState = {
+  roomId: string
+  users: SocketUser[]
+}
 
+type ChatReducerAction =
+  | {
+      type: 'join-room'
+      payload: { roomId: string; users: SocketUser[] }
+    }
+  | {
+      type: 'skip-room'
+    }
+
+type ChatReducer = (
+  state: ChatReducerState,
+  action: ChatReducerAction
+) => ChatReducerState
+
+const Chat = () => {
   const { messages, updateMessages } = useChatMessenger()
 
+  // create a reducer that will handle all the socket events
+  // and update the state accordingly.
+  // start with the join room event. Add typescript types too
+  const [state, dispatch] = useReducer<ChatReducer>(
+    (state, action) => {
+      switch (action.type) {
+        case 'join-room':
+          return {
+            ...state,
+            roomId: action.payload.roomId,
+            users: action.payload.users
+          }
+        case 'skip-room':
+          return {
+            ...state,
+            roomId: '',
+            users: []
+          }
+        default:
+          return state
+      }
+    },
+    { roomId: '', users: [] }
+  )
+
   useEffect(() => {
-    socket.on('connect', () => {
-      setIsConnected(true)
-    })
+    socket.emit('joinsert-room')
 
-    socket.on('disconnect', () => {
-      setIsConnected(false)
-    })
-
-    socket.on('pong', () => {
-      setLastPong(new Date().toISOString())
+    socket.on('room-update', (roomId: string, users: SocketUser[]) => {
+      dispatch({ type: 'join-room', payload: { roomId, users } })
     })
 
     return () => {
-      socket.off('connect')
-      socket.off('disconnect')
-      socket.off('pong')
+      socket.off('room-update')
     }
   }, [])
 
-  const sendPing = () => {
-    socket.emit('ping')
+  const skip = () => {
+    socket.emit('skip-room')
   }
 
   return (
@@ -72,19 +105,25 @@ const Chat = () => {
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
         >
-          <button onClick={sendPing}>Send ping</button>
-          <UserVideo />
+          {/* <UserVideo /> */}
         </ErrorBoundary>
       </div>
       <div className="col-start-1 row-start-2 self-center">
         <ErrorBoundary
           FallbackComponent={({ error }) => <div>{error.message}</div>}
         >
-          <UserVideo />
+          {/* <UserVideo /> */}
         </ErrorBoundary>
       </div>
 
       <div className="col-span-2 row-span-2">
+        <p>Room: {state.roomId}</p>
+        <p>Users</p>
+        {state.users.map((user) => (
+          <div key={user.socketId}>{user.socketId}</div>
+        ))}
+        {/* TODO: Disable when roomId is '' */}
+        <button onClick={skip}>skip</button>
         <ChatMessenger
           className="h-full"
           messages={messages}
