@@ -19,9 +19,9 @@ interface FriendConversation extends User {
   messages: ChatMessage[]
 }
 
-type ChatMessage = {
-  id: string
+interface UserMessage {
+  id: Uuid
+  senderId: Uuid
   text: string
-  sender: string
-  date: string
+  timestamp: number
 }

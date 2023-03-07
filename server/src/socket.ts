@@ -12,6 +12,13 @@ interface Room {
   users: User[];
 }
 
+interface UserMessage {
+  id: Uuid;
+  senderId: Uuid;
+  text: string;
+  timestamp: number;
+}
+
 type SocketId = Uuid;
 type RoomId = Uuid;
 
@@ -92,13 +99,27 @@ export class ServerSocket {
       this.leaveRoom(socket);
     });
 
-    socket.on('message', (message: string) => {
-      socket.broadcast.emit('message', message);
-    });
+    socket.on('message', (messageText: string) => {
+      // send to all clients in current room, besides sender
+      const { roomId } = this.getCurrentRoom(socket);
 
-    socket.on('my-message', (msg) => {
-      msg.sender = 'them';
-      socket.broadcast.emit('their-message', msg);
+      if (!roomId) {
+        return;
+      }
+
+      const message: UserMessage = {
+        id: v4(),
+        senderId: socket.id,
+        text: messageText,
+        timestamp: Date.now(),
+      };
+
+      console.info(
+        `User ${socket.id} sent message to room ${roomId}:`,
+        messageText
+      );
+
+      this.io.to(roomId).emit('message', message);
     });
 
     socket.on('disconnect', () => {
@@ -175,5 +196,15 @@ export class ServerSocket {
     }
 
     this.io.to(roomId).emit('room-update', roomId, room.users);
+  };
+
+  getCurrentRoom = (socket: Socket) => {
+    const roomId = Array.from(socket.rooms).find((room) => room !== socket.id);
+    if (!roomId) {
+      return { roomId: null, room: null };
+    }
+
+    const room = this.rooms.get(roomId);
+    return { roomId, room };
   };
 }
