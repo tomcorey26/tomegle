@@ -1,14 +1,15 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useState } from 'react'
 import { For } from '@/components/For'
-import { useUser } from '@/hooks/useUser'
 import { useChatScroll } from '@/hooks/useScrollToBottom'
 import { usePreviousState } from '@/hooks/usePreviousState'
+import { socket } from '@/socket'
 
 type ChatMessengerProps = {
   conversationId?: string
-  messages: ChatMessage[]
-  updateMessages: React.Dispatch<ChatMessage>
+  messages: UserMessage[]
+  onMessage: (text: string) => void
   className?: string
+  disabledForm?: boolean
 }
 
 // when they have a new message and we are above the threshold, we dont want to scroll to the bottom
@@ -19,23 +20,17 @@ type ChatMessengerProps = {
 export function ChatMessenger({
   conversationId,
   messages,
-  updateMessages,
-  className = ''
+  onMessage,
+  className = '',
+  disabledForm = false
 }: ChatMessengerProps) {
-  const user = useUser()
-
   const prevConversationId = usePreviousState(conversationId)
 
   const { chatScrollerProps, scrolledAboveThreshold, scrollToBottom } =
     useChatScroll<HTMLUListElement>()
 
   const addMessage = (text: string) => {
-    updateMessages({
-      text,
-      sender: user.id,
-      id: crypto.randomUUID(),
-      date: new Date().toISOString()
-    })
+    onMessage(text)
   }
 
   useLayoutEffect(() => {
@@ -57,7 +52,7 @@ export function ChatMessenger({
   ])
 
   return (
-    <div className={`relative flex flex-col p-5 ${className}`}>
+    <div className={`relative flex flex-col px-5 pb-5 ${className}`}>
       {/* TODO: show new message count for any messages */}
       {/* sent when above threshhold */}
       {scrolledAboveThreshold && (
@@ -78,16 +73,17 @@ export function ChatMessenger({
         </For>
       </ul>
 
-      <ChatForm addMessage={addMessage} />
+      <ChatForm disabled={disabledForm} addMessage={addMessage} />
     </div>
   )
 }
 
 type ChatFormProps = {
   addMessage: (text: string) => void
+  disabled?: boolean
 }
 
-function ChatForm({ addMessage }: ChatFormProps) {
+function ChatForm({ addMessage, disabled }: ChatFormProps) {
   const [input, setInput] = useState<string>('')
 
   function wrappedHandleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -104,16 +100,19 @@ function ChatForm({ addMessage }: ChatFormProps) {
       className="flex rounded-lg border-2  border-gray-200 p-4 "
     >
       <input
+        type="text"
         value={input}
         onChange={(event) => setInput(event.target.value)}
         className="mr-2 w-full resize-none rounded-lg p-2"
         placeholder="Enter your message"
+        disabled={disabled}
       />
 
       <div className="self-end">
         <button
           type="submit"
           className="bg-primary rounded-lg py-2 px-4 text-white"
+          disabled={input.trim() === '' || disabled}
         >
           Send
         </button>
@@ -123,17 +122,16 @@ function ChatForm({ addMessage }: ChatFormProps) {
 }
 
 type ChatMessageProps = {
-  message: ChatMessage
+  message: UserMessage
 }
 function ChatMessage({
   children,
-  message: { sender, date }
+  message: { senderId, timestamp }
 }: React.PropsWithChildren<ChatMessageProps>) {
   const classArray = []
-  const user = useUser()
 
   let label = ''
-  if (sender === user.id) {
+  if (senderId === socket.id) {
     classArray.push('bg-primary', 'text-white', 'ml-auto')
     label = 'Me'
   } else {
@@ -146,7 +144,7 @@ function ChatMessage({
   const formattedDate = new Intl.DateTimeFormat('en-US', {
     hour: 'numeric',
     minute: 'numeric'
-  }).format(new Date(date))
+  }).format(new Date(timestamp))
 
   return (
     <li

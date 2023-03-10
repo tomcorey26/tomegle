@@ -1,4 +1,4 @@
-import { useChatMessenger } from '@/hooks/useChatMessenger'
+import { Button } from '@/components/Button'
 import { ChatMessenger } from '@/components/ChatMessenger'
 import { UserVideo } from '@/pages/chat/components/UserVideo'
 import { useEffect, useReducer, useState } from 'react'
@@ -39,6 +39,7 @@ import { socket } from 'socket'
 type ChatReducerState = {
   roomId: string
   users: SocketUser[]
+  roomMessages: UserMessage[]
 }
 
 type ChatReducerAction =
@@ -49,6 +50,10 @@ type ChatReducerAction =
   | {
       type: 'skip-room'
     }
+  | {
+      type: 'new-message'
+      payload: UserMessage
+    }
 
 type ChatReducer = (
   state: ChatReducerState,
@@ -56,8 +61,6 @@ type ChatReducer = (
 ) => ChatReducerState
 
 const Chat = () => {
-  const { messages, updateMessages } = useChatMessenger()
-
   // create a reducer that will handle all the socket events
   // and update the state accordingly.
   // start with the join room event. Add typescript types too
@@ -68,19 +71,26 @@ const Chat = () => {
           return {
             ...state,
             roomId: action.payload.roomId,
-            users: action.payload.users
+            users: action.payload.users,
+            roomMessages: []
           }
         case 'skip-room':
           return {
             ...state,
             roomId: '',
-            users: []
+            users: [],
+            roomMessages: []
+          }
+        case 'new-message':
+          return {
+            ...state,
+            roomMessages: [...state.roomMessages, action.payload]
           }
         default:
           return state
       }
     },
-    { roomId: '', users: [] }
+    { roomId: '', users: [], roomMessages: [] }
   )
 
   useEffect(() => {
@@ -90,14 +100,26 @@ const Chat = () => {
       dispatch({ type: 'join-room', payload: { roomId, users } })
     })
 
+    socket.on('message', (message: UserMessage) => {
+      console.log('new message', message)
+      dispatch({ type: 'new-message', payload: message })
+    })
+
     return () => {
       socket.off('room-update')
+      socket.off('message')
     }
   }, [])
 
   const skip = () => {
     socket.emit('skip-room')
   }
+
+  const sendMessage = (message: string) => {
+    socket.emit('message', message)
+  }
+
+  const isChatDisabled = !state.roomId || state.users.length < 2
 
   return (
     <div className="grid h-full grid-cols-3 grid-rows-2">
@@ -116,19 +138,25 @@ const Chat = () => {
         </ErrorBoundary>
       </div>
 
-      <div className="col-span-2 row-span-2">
-        <p>Room: {state.roomId}</p>
-        <p>Users</p>
-        {state.users.map((user) => (
-          <div key={user.socketId}>{user.socketId}</div>
-        ))}
-        {/* TODO: Disable when roomId is '' */}
-        <button onClick={skip}>skip</button>
+      <div className="col-span-2 row-span-2 flex flex-col border-l-2 border-gray-200">
         <ChatMessenger
-          className="h-full"
-          messages={messages}
-          updateMessages={updateMessages}
+          className="flex-1"
+          messages={state.roomMessages}
+          onMessage={sendMessage}
+          disabledForm={isChatDisabled}
         />
+        <div className="border-y-2 border-gray-200 p-4">
+          <Button disabled={!state.roomId} onClick={skip}>
+            Skip
+          </Button>
+          <p>Room: {state.roomId}</p>
+          <p>Users</p>
+          <ul>
+            {state.users.map((user) => (
+              <li key={user.socketId}>{user.socketId}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )

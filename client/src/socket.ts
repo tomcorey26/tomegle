@@ -5,10 +5,12 @@ interface ClientToServerEvents {
   'skip-room': () => void
   'send-message': (message: string) => void
   handshake: (callback: (user: SocketUser) => void) => void
+  message: (message: string) => void
 }
 
 interface ServerToClientEvents {
   'room-update': (roomId: string, users: SocketUser[]) => void
+  message: (message: UserMessage) => void
 }
 
 export const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(
