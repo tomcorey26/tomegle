@@ -5,9 +5,6 @@ type ButtonProps = React.DetailedHTMLProps<
 
 export const Button = (props: ButtonProps) => {
   return (
-    <button
-      className="rounded bg-blue-500 py-2 px-4 font-bold text-white hover:bg-blue-700"
-      {...props}
-    />
+    <button className="bg-primary rounded-lg py-2 px-4 text-white" {...props} />
   )
 }

@@ -52,7 +52,7 @@ export function ChatMessenger({
   ])
 
   return (
-    <div className={`relative flex flex-col p-5 ${className}`}>
+    <div className={`relative flex flex-col px-5 pb-5 ${className}`}>
       {/* TODO: show new message count for any messages */}
       {/* sent when above threshhold */}
       {scrolledAboveThreshold && (

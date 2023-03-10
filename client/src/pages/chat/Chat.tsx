@@ -1,3 +1,4 @@
+import { Button } from '@/components/Button'
 import { ChatMessenger } from '@/components/ChatMessenger'
 import { UserVideo } from '@/pages/chat/components/UserVideo'
 import { useEffect, useReducer, useState } from 'react'
@@ -137,21 +138,25 @@ const Chat = () => {
         </ErrorBoundary>
       </div>
 
-      <div className="col-span-2 row-span-2">
-        <p>Room: {state.roomId}</p>
-        <p>Users</p>
-        {state.users.map((user) => (
-          <div key={user.socketId}>{user.socketId}</div>
-        ))}
-        <button disabled={!state.roomId} onClick={skip}>
-          skip
-        </button>
+      <div className="col-span-2 row-span-2 flex flex-col border-l-2 border-gray-200">
         <ChatMessenger
-          className="h-full"
+          className="flex-1"
           messages={state.roomMessages}
           onMessage={sendMessage}
           disabledForm={isChatDisabled}
         />
+        <div className="border-y-2 border-gray-200 p-4">
+          <Button disabled={!state.roomId} onClick={skip}>
+            Skip
+          </Button>
+          <p>Room: {state.roomId}</p>
+          <p>Users</p>
+          <ul>
+            {state.users.map((user) => (
+              <li key={user.socketId}>{user.socketId}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   )
